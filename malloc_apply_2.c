@@ -5,7 +5,7 @@ int main(void)
 {
 	int i, x, y;
 	
-	int **pp = (int **)malloc(sizeof(int)*10);
+	int **pp = (int **)malloc(sizeof(int*)*10);
 	
 	for(i=0;i<10;i++)
 	{
