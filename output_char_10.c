@@ -6,7 +6,7 @@ int main(void)
 	char*p = a;
 	int i,j;
 	
-	printf("단어를 \n");
+	printf("단어를 입력하세요\n");
 	scanf("%s",p);
 	
 	for(j=0;j<10;j++)
