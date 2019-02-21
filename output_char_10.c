@@ -6,7 +6,7 @@ int main(void)
 	char*p = a;
 	int i,j;
 	
-	printf("´Ü¾î¸¦ ÀÔ·ÂÇÏ¼¼¿ä\n");
+	printf("ë‹¨ì–´ë¥¼ \n");
 	scanf("%s",p);
 	
 	for(j=0;j<10;j++)
