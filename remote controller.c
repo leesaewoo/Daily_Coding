@@ -22,7 +22,7 @@ int main(void)
 		scanf("%d", &channel_int); // 원하는 채널 입력 
 		if(channel_int > 500000 || channel_int < 0)
 		{
-			printf("채널은 0 ~ 500000 사이의 값이여야 합니다.\n");
+			printf("채널은 0 ~ 500000 사이의 값이어야 합니다.\n");
 		}
 		else
 		{
@@ -31,10 +31,24 @@ int main(void)
 		}
 	}
 	
-	scanf("%d", &button_count); // 고장난 버튼의 갯수 입력 
+	while(1)
+	{	
+		scanf("%d", &button_count); // 고장난 버튼의 갯수 입력 
+		if(button_count > 10 || button_count < 0)
+		{
+			printf("고장난 버튼의 갯수는 0 ~ 10 사이의 값이어야 합니다.\n");
+		}
+		else
+		{
+			break;
+		} 
+	}
 	char out[(button_count*2)-1];
 	char *po = out;
-	scanf(" %[^\n]s",po); // 고장난 버튼의 번호 입력 
+	if(button_count != 0)
+	{
+		scanf(" %[^\n]s",po); // 고장난 버튼의 번호 입력 
+	}
 	for(i=0;i<button_count;i++) // array 배열에서 고장난 버튼의 값을 -1로 바꿈 
 	{
 		*(pa+(*(po+(2*i))-'0')) = -1;
