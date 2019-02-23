@@ -17,7 +17,7 @@ int main(void)
  	int array[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
 	int *pa = array;
 
-	do
+	while(1)
 	{
 		scanf("%d", &channel_int); // 원하는 채널 입력 
 		if(channel_int > 500000 || channel_int < 0)
@@ -29,7 +29,7 @@ int main(void)
 			temp = channel_int;
 			break;
 		}
-	} while(1);
+	}
 	
 	scanf("%d", &button_count); // 고장난 버튼의 갯수 입력 
 	char out[(button_count*2)-1];
@@ -96,6 +96,8 @@ int main(void)
 	}
 	
 	printf("cmp_plus = %d\n",cmp_plus);
+	
+	printf("Compare_100 = %d\n",Compare_100(channel_int));
 	
 	return 0;
 }
