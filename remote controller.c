@@ -4,7 +4,8 @@
 #include <math.h>
 
 int Channel_Count(int x); // 원하는 채널 자릿수 구하는 함수
-int Compare_100(); //100에서 +-로만 원하는 채널 맞추는 경우 
+int Compare_100(); //100에서 +-로만 원하는 채널 맞추는 경우
+
 
 int main(void)
 {
@@ -12,11 +13,14 @@ int main(void)
 	int channel_int; //원하는 채널
 	int channel_count; //원하는 채널의 자릿수
 	int button_count; // 고장난 버튼의 갯수 
-	int cmp_plus;
-	int cmp_minus;
+	int cmp_plus = 0;
+	int cmp_plus_count = 0;
+	int cmp_minus = 0;
+	int cmp_minus_count = 0;
  	int array[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
 	int *pa = array;
-
+	int array_max; // 고장난 버튼을 제외하고 가장 큰 버튼 값
+		
 	while(1)
 	{
 		scanf("%d", &channel_int); // 원하는 채널 입력 
@@ -53,6 +57,14 @@ int main(void)
 	{
 		*(pa+(*(po+(2*i))-'0')) = -1;
 	}
+	for(i=9;i>0;i--)
+	{
+		if(*(pa+i) != -1)
+		{
+			array_max = *(pa+i);
+			break;
+		}
+	}
 	
 	channel_count = Channel_Count(channel_int); // 원하는 채널 자릿수 구하기 	
 	char channel_char[channel_count]; // 원하는 채널 char 배열 선언 
@@ -67,29 +79,44 @@ int main(void)
 	{
 		if(i == channel_count -1)
 		{
-			if(*(pa+(*(pcc+i))) != -1)
+			if(*(pa + *(pcc+i)) != -1)
 			{
-				cmp_plus = 4;
+			cmp_plus += pow(10,channel_count -i - 1) * (*(pa + *(pcc+i)));
 			}
 			else
 			{
 				for(j=1;j<=*(pcc+i);j++)
 				{
-					if(*(pa+(*(pcc+i)) - j) != -1)
+					if(*(pa + *(pcc+i) - j) != -1)
 					{
-						cmp_plus = 4 + j;
+						cmp_plus += pow(10,channel_count -i - 1) * (*(pa + *(pcc+i) - j));
 						break;
 					}
-					
-					if(j == *(pcc+i))
+					else if(j == *(pcc+i))
 					{
-						cmp_plus = 600000;
+						cmp_plus_count = 600000;
 					}
 				}
 			}
 		}
 		
-		//여기에 0 ~ channel_count -2 까지 판별식 넣어야함 
+		//여기에 0 ~ channel_count -2 까지 판별식 넣어야함
+
+		if(*(pa + *(pcc+i)) != -1 && i < channel_count -1 )
+		{
+			cmp_plus += pow(10,channel_count -i - 1) * (*(pa + *(pcc+i)));
+		}
+		else if(*(pa + *(pcc+i)) == -1 && i < channel_count -1)
+		{
+			for(j=1;j<=*(pcc+i);j++)
+			{
+				if(*(pa + *(pcc+i) - j) != -1 && *(pcc+i) - j >= 0 )
+				{
+					cmp_plus += pow(10,channel_count -i -1) * *(pa + *(pcc+i) - j);
+					break;
+				}
+			}
+		}
 	}
 
 	for(i=0;i<channel_count;i++) // 원하는 채널 char 배열 확인 
@@ -111,7 +138,13 @@ int main(void)
 	
 	printf("cmp_plus = %d\n",cmp_plus);
 	
+	printf("cmp_plus_count = %d\n",cmp_plus_count);	
+	
 	printf("Compare_100 = %d\n",Compare_100(channel_int));
+	
+	printf("array_max = %d\n",array_max);
+	
+	printf("*(pa+(*(pcc+i)) = %d\n",pow(10,channel_count));
 	
 	return 0;
 }
@@ -148,8 +181,3 @@ int Compare_100(int x)
 {
 	return abs(x-100);
 }
-
-
-
-
-
