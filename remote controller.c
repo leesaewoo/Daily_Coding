@@ -109,39 +109,8 @@ int main(void)
 				cmp_plus = 9999999;
 				break;
 			}
-			break;
 		}
-		
-		if(i == channel_count -1)
-		{
-			if(*(pa + *(pcc+i)) != -1)
-			{
-			cmp_plus += (*(pa + *(pcc+i)));
-			}
-			else
-			{
-				for(j=1;j<=*(pcc+i);j++)
-				{
-					if(*(pa + *(pcc+i) - j) >= 0 && *(pa + *(pcc+i) - j) < 10 && i-j >= 0 && check !=88)
-					{
-						cmp_plus += (*(pa + *(pcc+i) - j));
-						break;
-					}
-					else if(check == 88) // 한 자릿수 낮은 가장 큰 수에서 ++ 경우 
-					{
-						cmp_plus = 0;
-						
-						for(l=1;l<channel_count;l++)
-						{
-							cmp_plus += pow(10,channel_count - l - 1) * array_max;
-						}
-						check = 77;
-						break;
-					}	
-				}
-			}
-		}
-		
+				
 		// 0 ~ channel_count -2 까지 판별식
 
 		if(*(pa + *(pcc+i)) != -1 && i < channel_count -1 && channel_count != 1)
@@ -152,12 +121,19 @@ int main(void)
 		{
 			for(j=1;j<=*(pcc+i);j++)
 			{
-				if (*(pa + *(pcc+i) - j) == 0 && i == 0)
+				if(*(pa + *(pcc+i) - j) == 0 && i == 0) // 한 자릿수 낮은 가장 큰 수에서 ++ 경우
 				{
-					check = 88;
+					cmp_plus = 0;
+						
+					for(l=1;l<channel_count;l++)
+					{
+						cmp_plus += pow(10,channel_count - l - 1) * array_max;
+					}
+					check = 77;				
+					i = channel_count;
 					break;
 				}
-				else if(*(pa + *(pcc+i) - j) != -1 && *(pcc+i) - j >= 0 && check != 88)
+				else if(*(pa + *(pcc+i) - j) != -1 && *(pcc+i) - j >= 0)
 				{
 					cmp_plus += pow(10,channel_count -i -1) * *(pa + *(pcc+i) - j);
 					
@@ -166,12 +142,37 @@ int main(void)
 						cmp_plus += pow(10,channel_count -i -1 -k) * array_max;
 					}
 					i = channel_count;
+					j = *(pcc+i) + 1;
 					break;
 				}
 			}
 		}
+		
+		if(i == channel_count -1)
+		{
+			if(*(pa + *(pcc+i)) != -1)
+			{
+			cmp_plus += (*(pa + *(pcc+i)));
+			}
+			else if((*(pa + *(pcc+i)) == -1))
+			{
+				for(j=1;j<=*(pcc+i);j++)
+				{
+					if(*(pa + *(pcc+i) - j) >= 0 && *(pa + *(pcc+i) - j) < 10 && i-j >= 0)
+					{
+						cmp_plus += (*(pa + *(pcc+i) - j));
+						break;
+					}
+					else if(j == *(pcc+i))
+					{
+						cmp_plus = 9999999;
+						break;
+					}	
+				}
+			}
+		}		
 	}
-	if(cmp_plus == channel_int) // cmp_plus_count 구하기
+	if(cmp_plus == channel_int && check != 77) // cmp_plus_count 구하기
 	{
 		cmp_plus_count = channel_count;
 	}
@@ -179,11 +180,11 @@ int main(void)
 	{
 		cmp_plus_count = abs(cmp_plus - channel_int) + channel_count - 1;
 	}
-	else if(check == 88 && button_count == 9)
+	else if(button_count == 9 && *pa == 0)
 	{
 		cmp_plus_count = channel_int + 1;
 	}
-	else
+	else if(check != 77)
 	{
 		cmp_plus_count = abs(cmp_plus - channel_int) + channel_count;
 	}	
