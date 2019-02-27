@@ -7,6 +7,9 @@ int Channel_Count(int x); // 원하는 채널 자릿수 구하는 함수
 int Compare_100(); //100에서 +-로만 원하는 채널 맞추는 경우에 버튼 누른 횟수 구하는 함수 
 int Compare_plus_minus_100(); //가장 적게 누른 횟수 구하는 함수 
 
+// TO DO LIST
+// cmp_minus 쪽 전체적으로 손봐야 함
+ 
 int main(void)
 {
 	int i, j, k, l, m, temp, counter = 0;
@@ -125,7 +128,7 @@ int main(void)
 			{
 				if(*(pa + *pcc) != -1) // 첫 번째 자리는 같거나 
 				{
-					cmp_plus += pow(10, channel_count -1) * *(pa + *pcc);
+					cmp_plus += pow(10, channel_count - 1) * *(pa + *pcc);
 					counter++;
 				}
 				else if(*(pa + *pcc) == -1)
@@ -136,7 +139,7 @@ int main(void)
 						{
 							cmp_plus += pow(10, channel_count -1) * *(pa + *pcc - j);
 							counter++;
-							if(channel_count >1)
+							if(channel_count > i + 1)
 							{
 								for(k = channel_count -2 ; k >=0 ; k--)
 								{
@@ -150,7 +153,7 @@ int main(void)
 						}
 						else if(j == *pcc) // 첫 번째 자리에 가능한 수가 0보다 작거나 같을 경우 
 						{
-							for(k = channel_count - 2 ; k >= 0  ; k--)
+							for(k = channel_count - i - 2 ; k >= 0  ; k--)
 							{
 								cmp_plus += pow(10, k) * array_max;
 								counter++;
@@ -163,12 +166,120 @@ int main(void)
 			}
 			else // 나머지 자리는 같거나 작은 수 중 가장 큰 수 
 			{
-				
+				if(*(pa + *(pcc + i)) != -1) // 같을 때 
+				{
+					cmp_plus += pow(10, channel_count - i - 1) * *(pa + *(pcc + i));
+					counter++;
+				}
+				else if(*(pa + *(pcc + i)) == -1) 
+				{
+					for(j = 1 ; j <= *(pcc + i) ; j++)
+					{
+						if(*(pa + *(pcc + i) - j) != -1 && j != *(pcc + i)) // 작은 수 중 가장 큰 수 
+						{
+							cmp_plus += pow(10, channel_count - i -1) * *(pa + *(pcc + i) - j);
+							counter++;
+							if(channel_count > i + 1)
+							{
+								for(k = channel_count - i -2 ; k >=0 ; k--)
+								{
+									cmp_plus += pow(10, k) * array_max;
+									counter++;
+								}								
+							}
+							cmp_plus_count = abs(cmp_plus - channel_int) + counter;
+							i = channel_count;
+							break;							
+						}
+					}
+				}
 			}
 		}
+		cmp_plus_count = abs(cmp_plus - channel_int) + counter; //for문 끝나고 계산 
+		
+		counter = 0;
+		
+		for(i=0 ; i<channel_count ; i++) //cmp_minus
+		{
+			if(i == 0)
+			{
+				if(*(pa + *pcc) != -1) // 첫 번째 자리는 같거나 
+				{
+					cmp_minus += pow(10, channel_count - 1) * *(pa + *pcc);
+					counter++;
+				}
+				else if(*(pa + *pcc) == -1 && channel_count != 6) // 채널이 6자리가 아닐 때 
+				{
+					for(j = 1 ; j <= 9 - *pcc ; j++)
+					{
+						if(*(pa + *pcc + j) != -1) // 큰 수 중 가장 작은 수 
+						{
+							cmp_minus += pow(10, channel_count -1) * *(pa + *pcc + j);
+							counter++;
+							if(channel_count == 6) // 원하는 채널이 6자리인 경우 500000이 최대채널인 점 고려 
+							{
+								for(k = channel_count -2 ; k >=0 ; k--)
+								{
+									cmp_minus += pow(10, k) * array_max;
+									counter++;
+								}								
+							}
+							cmp_minus_count = abs(cmp_minus - channel_int) + counter;
+							i = channel_count;
+							break;
+						}
+						else if(*(pa + *pcc + j) == -1 && j == 9 - *pcc) // 첫 번째 자리에 가능한 수가 9보다 크거나 같은 수가 없을 경우
+						{
+							for(k = channel_count - i - 2 ; k >= 0  ; k--)
+							{
+								cmp_minus += pow(10, k) * array_max;
+								counter++;
+							}
+							cmp_minus_count = abs(cmp_minus - channel_int) + counter;
+							i = channel_count;
+						}
+					}
+				}
+				else if(*(pa + *pcc) == -1 && channel_count == 6) // 채널이 6자리 일 때 
+				{
+					
+				}
+			}
+			else // 나머지 자리는 같거나 작은 수 중 가장 큰 수 
+			{
+				if(*(pa + *(pcc + i)) != -1) // 같을 때 
+				{
+					cmp_minus += pow(10, channel_count - i - 1) * *(pa + *(pcc + i));
+					counter++;
+				}
+				else if(*(pa + *(pcc + i)) == -1) 
+				{
+					for(j = 1 ; j <= *(pcc + i) ; j++)
+					{
+						if(*(pa + *(pcc + i) - j) != -1 && j != *(pcc + i)) // 작은 수 중 가장 큰 수 
+						{
+							cmp_minus += pow(10, channel_count - i -1) * *(pa + *(pcc + i) - j);
+							counter++;
+							if(channel_count > i + 1)
+							{
+								for(k = channel_count - i -2 ; k >=0 ; k--)
+								{
+									cmp_minus += pow(10, k) * array_max;
+									counter++;
+								}								
+							}
+							cmp_minus_count = abs(cmp_minus - channel_int) + counter;
+							i = channel_count;
+							break;							
+						}
+					}
+				}
+			}
+		}
+		cmp_minus_count = abs(cmp_minus - channel_int) + counter; //for문 끝나고 계산 
 	}
  
-		//cmp_minus
+
 			//첫째 자리는  같거나, 큰 수 중 가장 작은 수
 			//나머지 자리는 누를수 있는 수 중 가장 작은 수로 
 			//첫째 자리에 가능한 수가 9보다 큰 경우 
