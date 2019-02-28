@@ -7,12 +7,12 @@ int Channel_Count(int x); // 원하는 채널 자릿수 구하는 함수
 int Compare_100(); //100에서 +-로만 원하는 채널 맞추는 경우에 버튼 누른 횟수 구하는 함수 
 int Compare_plus_minus_100(); //가장 적게 누른 횟수 구하는 함수 
 
-// TO DO LIST
-// cmp_minus 쪽 전체적으로 손봐야 함
+// TO DO LIST (20190301)
+// 293 line .. 첫째자리 && channel_count = 6 일때 
  
 int main(void)
 {
-	int i, j, k, l, m, temp, counter = 0;
+	int i, j, k, L, m, temp, counter = 0;
 	int channel_int; //원하는 채널
 	int channel_count; //원하는 채널의 자릿수
 	int button_count; // 고장난 버튼의 갯수 
@@ -216,11 +216,11 @@ int main(void)
 						{
 							cmp_minus += pow(10, channel_count -1) * *(pa + *pcc + j);
 							counter++;
-							if(channel_count == 6) // 원하는 채널이 6자리인 경우 500000이 최대채널인 점 고려 
+							if(channel_count > 1)
 							{
 								for(k = channel_count -2 ; k >=0 ; k--)
 								{
-									cmp_minus += pow(10, k) * array_max;
+									cmp_minus += pow(10, k) * array_min1;
 									counter++;
 								}								
 							}
@@ -230,13 +230,61 @@ int main(void)
 						}
 						else if(*(pa + *pcc + j) == -1 && j == 9 - *pcc) // 첫 번째 자리에 가능한 수가 9보다 크거나 같은 수가 없을 경우
 						{
-							for(k = channel_count - i - 2 ; k >= 0  ; k--)
+							if(channel_count == 5) // 채널의 자릿수가 5일 경우 채널의 최대치가 500000임을 유의 
 							{
-								cmp_minus += pow(10, k) * array_max;
-								counter++;
+								for(k = 0 ; k < 6  ; k++)
+								{
+									if(*(pa +*(pcc + i) + k) != -1 && k != 5) // 맨 앞자리가 5 미만일 경우 
+									{
+										for(L = 0 ; L <= channel_count ; L++)
+										{
+											cmp_minus += pow(10, channel_count - L) * *(pa + *(pcc + i) +k);
+											counter++;									
+										}
+										cmp_minus_count = abs(cmp_minus - channel_int) + counter;
+										i = channel_count;
+										break;
+									}
+									else if(*(pa + *(pcc + i) + k) != -1 && k == 5) // 맨 앞자리가 5일 경우 
+									{
+										if(array_min1 == 0)
+										{
+											cmp_minus = 500000;
+											counter = 6;
+											cmp_minus_count = abs(cmp_minus - channel_int) + counter;
+											i = channel_count;
+											break;
+										}
+									}
+									else if(*(pa + *(pcc + i) + k) == -1 && k == 5) // 맨 앞자리가 5보다 클 경우
+									{
+										cmp_minus_count = 9999999;
+										i = channel_count;
+										break;										
+									} 
+								}
+								cmp_minus_count = abs(cmp_minus - channel_int) + counter;
+								i = channel_count;								
 							}
-							cmp_minus_count = abs(cmp_minus - channel_int) + counter;
-							i = channel_count;
+							else
+							{
+								for(k = channel_count ; k < channel_count ; k++)
+								{
+									if(k == channel_count)
+									{
+										cmp_minus += pow(10, k) * array_min2;
+										counter++;									
+									}
+									else
+									{
+										cmp_minus += pow(10, k) * array_min1;
+										counter++;
+									}
+								}
+								cmp_minus_count = abs(cmp_minus - channel_int) + counter;
+								i = channel_count;
+							}
+							break;
 						}
 					}
 				}
