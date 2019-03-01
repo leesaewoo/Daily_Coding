@@ -1,14 +1,12 @@
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include <math.h>
 
 int Channel_Count(int x); // 원하는 채널 자릿수 구하는 함수
 int Compare_100(); //100에서 +-로만 원하는 채널 맞추는 경우에 버튼 누른 횟수 구하는 함수 
 int Compare_plus_minus_100(); //가장 적게 누른 횟수 구하는 함수 
 
-// TO DO LIST (20190301)
-// 353 line .. 두번째 자리부터 계산하는거 + - 둘 다 만들어야함.. 
+// https://www.acmicpc.net/problem/1107 해당 페이지 에서는 채널이 무한대이나, 
+// 여기서는 0 이상 500000 이하로 제한하였다.
  
 int main(void)
 {
@@ -114,7 +112,14 @@ int main(void)
 
 	if(button_count == 0) // 고장난 버튼이 없을 때
 	{
-		printf("%d", channel_count); // button_push = channel_count 
+		if(channel_count > Compare_100(channel_int))
+		{
+			printf("%d", Compare_100(channel_int));
+		}
+		else
+		{
+			printf("%d", channel_count);
+		}
 	}
 	else if(button_count == 10) // 버튼이 모두 고장났을 때
 	{
@@ -122,7 +127,7 @@ int main(void)
 	}
 	else if(button_count == 9 && *pa == 0) // 버튼이 0 빼고 모두 고장났을 때
 	{
-		counter = 1; //버튼은 무조건 한번만 누르는거 (0) 
+		counter = 1; //버튼은 무조건 한번만 누르는거 (0)
 		button_push = counter + channel_int;
 		if(button_push >= Compare_100(channel_int))
 		{
@@ -147,7 +152,7 @@ int main(void)
 					cmp_plus += pow(10, channel_count - 1) * *(pa + *pcc);
 					counter++;
 				}
-				else if(*(pa + *pcc) == -1)
+				else if(*(pa + *pcc) == -1 && *pcc != 0)
 				{
 					for(j = 1 ; j <= *pcc ; j++)
 					{
@@ -167,7 +172,7 @@ int main(void)
 							i = channel_count;
 							break;
 						}
-						else if(j == *pcc) // 첫 번째 자리에 가능한 수가 0보다 작거나 같을 경우 
+						else if(*pcc - j <= 0) // 첫 번째 자리에 가능한 수가 0보다 작거나 같을 경우 
 						{
 							for(k = channel_count - i - 2 ; k >= 0  ; k--)
 							{
@@ -179,6 +184,11 @@ int main(void)
 						}
 					}
 				}
+				else if(*pcc = 0 && *(pa + *pcc) == -1) // 원하는 채널이 0 일 경우
+				{
+					cmp_plus_count = 9999999;
+					i = channel_count;
+				}
 			}
 			else // 나머지 자리는 같거나 작은 수 중 가장 큰 수 
 			{
@@ -187,15 +197,15 @@ int main(void)
 					cmp_plus += pow(10, channel_count - i - 1) * *(pa + *(pcc + i));
 					counter++;
 				}
-				else if(*(pa + *(pcc + i)) == -1) 
+				else if(*(pa + *(pcc + i)) == -1) //다를 때 
 				{
-					for(j = 1 ; j <= *(pcc + i) ; j++)
+					for(j = 1 ; j <= *(pcc + i) ; j++) // 작은 수 중 검색 
 					{
-						if(*(pa + *(pcc + i) - j) != -1 && j != *(pcc + i)) // 작은 수 중 가장 큰 수 
+						if(*(pa + *(pcc + i) - j) != -1) // 작은 수 중 가장 큰 수 있음 
 						{
-							cmp_plus += pow(10, channel_count - i -1) * *(pa + *(pcc + i) - j);
+							cmp_plus += pow(10, channel_count - i - 1) * *(pa + *(pcc + i) - j); // 그거 쓰고 
 							counter++;
-							if(channel_count > i + 1)
+							if(channel_count > i + 1) // 나머지 자리는 max 로 채움 
 							{
 								for(k = channel_count - i -2 ; k >=0 ; k--)
 								{
@@ -205,13 +215,43 @@ int main(void)
 							}
 							cmp_plus_count = abs(cmp_plus - channel_int) + counter;
 							i = channel_count;
-							break;							
+							break;
+						}
+						else if(j ==  *(pcc + i)) // 작은 수 중 가장 큰 수 없음 
+						{
+							for(k = 1 ; k <= i ; k++)
+							{
+								for(L = 1 ; L <= *(pcc + i - k) ; L++) // 해당 자리에서 왼쪽으로 k 만큼 간 자리보다 작은 수 중 가장 큰 수 검색 
+								{
+									if(*(pa + *(pcc + i - k) - L) != -1) // 있으면
+									{
+										cmp_plus -= pow(10, channel_count - i - 1 + k) * *(pa + *(pcc + i - k));
+										cmp_plus += pow(10, channel_count - i - 1 + k) * *(pa + *(pcc + i - k) - L);
+										for(m = 1 ; m <= channel_count - i - 1 + k ; m++)
+										{
+											cmp_plus += pow(10, (channel_count - i - 1 + k) - m) * array_max;
+											counter++;
+										}
+										i = channel_count;
+										k = i + 1;
+										break;
+									}
+								}
+							}
+							if(*(pa + *(pcc + i - k) - L) == -1 && L == *(pcc + i - k)) // 없으면 꽝 
+							{
+								cmp_plus_count = 9999999;
+								i = channel_count;
+							}
 						}
 					}
 				}
 			}
 		}
-		cmp_plus_count = abs(cmp_plus - channel_int) + counter; //for문 끝나고 계산 
+		if(cmp_plus_count != 9999999)
+		{
+			cmp_plus_count = abs(cmp_plus - channel_int) + counter; //for문 끝나고 계산 			
+		}
 		
 		counter = 0;
 		
@@ -250,7 +290,7 @@ int main(void)
 							{
 								for(k = 0 ; k < 6  ; k++)
 								{
-									if(*(pa +*(pcc + i) + k) != -1 && k != 5) // 맨 앞자리가 5 미만일 경우 
+									if(*(pa +*(pcc + i) + k) != -1 && k != 5) // 맨 앞자리에 가능한 버튼이 5 미만일 경우 
 									{
 										for(L = 0 ; L <= channel_count ; L++)
 										{
@@ -261,7 +301,7 @@ int main(void)
 										i = channel_count;
 										break;
 									}
-									else if(*(pa + *(pcc + i) + k) != -1 && k == 5) // 맨 앞자리가 5일 경우 
+									else if(*(pa + *(pcc + i) + k) != -1 && k == 5) // 맨 앞자리에 가능한 버튼이 5일 경우 
 									{
 										if(array_min1 == 0)
 										{
@@ -272,7 +312,7 @@ int main(void)
 											break;
 										}
 									}
-									else if(*(pa + *(pcc + i) + k) == -1 && k == 5) // 맨 앞자리가 5보다 클 경우
+									else if(*(pa + *(pcc + i) + k) == -1 && k == 5) // 맨 앞자리에 가능한 버튼이 5보다 클 경우
 									{
 										cmp_minus_count = 9999999;
 										i = channel_count;
@@ -357,44 +397,69 @@ int main(void)
 					cmp_minus += pow(10, channel_count - i - 1) * *(pa + *(pcc + i));
 					counter++;
 				}
-				else if(*(pa + *(pcc + i)) == -1) 
+				else if(*(pa + *(pcc + i)) == -1) //다를 때 
 				{
-					for(j = 1 ; j <= *(pcc + i) ; j++)
+					for(j = 1 ; j <= 10 - *(pcc + i) ; j++) // 큰 수 중 검색 
 					{
-						if(*(pa + *(pcc + i) + j) != -1 && j != *(pcc + i)) // 큰 수 중 가장 작은 수 
+						if(*(pa + *(pcc + i) + j) != -1) // 큰 수 중 가장 작은 수 있음 
 						{
-							cmp_minus += pow(10, channel_count - i -1) * *(pa + *(pcc + i) - j);
+							cmp_minus += pow(10, channel_count - i - 1) * *(pa + *(pcc + i) + j); // 그거 쓰고 
 							counter++;
-							if(channel_count > i + 1)
+							if(channel_count > i + 1) // 나머지 자리는 min1 로 채움 
 							{
 								for(k = channel_count - i -2 ; k >=0 ; k--)
 								{
-									cmp_minus += pow(10, k) * array_max;
+									cmp_minus += pow(10, k) * array_min1;
 									counter++;
 								}								
 							}
 							cmp_minus_count = abs(cmp_minus - channel_int) + counter;
 							i = channel_count;
-							break;							
+							break;
+						}
+						else if(j == 10 - *(pcc + i)) // 큰 수 중 가장 작은 수 없음 
+						{
+							for(k = 1 ; k <= i ; k++)
+							{
+								for(L = 1 ; L <= 9 - *(pcc + i - k) ; L++) // 해당 자리에서 왼쪽으로 k 만큼 간 자리보다 큰 수 중 가장 작은 수 검색 
+								{
+									if(*(pa + *(pcc + i - k) + L) != -1) // 있으면
+									{
+										cmp_minus -= pow(10, channel_count - i - 1 + k) * *(pa + *(pcc + i - k));
+										cmp_minus += pow(10, channel_count - i - 1 + k) * *(pa + *(pcc + i - k) + L);
+										for(m = 1 ; m <= channel_count - i - 1 + k ; m++)
+										{
+											cmp_minus += pow(10, (channel_count - i - 1 + k) - m) * array_min1;
+											counter++;
+										}
+										i = channel_count;
+										k = i + 1;
+										break;
+									}
+								}
+							}
+							if(*(pa + *(pcc + i - k) + L) == -1 && L == 10 - *(pcc + i - k)) // 없으면 꽝 
+							{
+								cmp_minus_count = 9999999;
+								i = channel_count;
+							}
 						}
 					}
 				}
 			}
 		}
-		cmp_minus_count = abs(cmp_minus - channel_int) + counter; //for문 끝나고 계산 
+		if(cmp_minus_count != 9999999)
+		{
+			cmp_minus_count = abs(cmp_minus - channel_int) + counter; //for문 끝나고 계산
+		}
+		
+		printf("%d",Compare_plus_minus_100(cmp_plus_count,cmp_minus_count,Compare_100(channel_int)));
 	}
  
 
-			//첫째 자리는  같거나, 큰 수 중 가장 작은 수
-			//나머지 자리는 누를수 있는 수 중 가장 작은 수로 
-			//첫째 자리에 가능한 수가 9보다 큰 경우 
-				//원하는 채널보다 한 자릿수 많은 채널에서 -- 
-				//첫째 자리는 0이 아닌 가장 작은 수
-				//나머지 자리는 누를 수 있는 수 중 가장 작은 수 (0도 가능) 
-		//Compare_100(channel_int) 
-
-
-
+	printf("\n");
+	printf("\nCHECK LIST\n");
+	
 	for(i=0;i<channel_count;i++) // 원하는 채널 char 배열 확인 
 	{
 		printf("channel_char(%d) = %d\n",i,*(pcc+i));
@@ -423,8 +488,6 @@ int main(void)
 	printf("Compare_100 = %d\n",Compare_100(channel_int));
 	
 	printf("array_max = %d\narray_min1 = %d\narray_min2 = %d\n",array_max,array_min1,array_min2);
-	
-	printf("채널을 맞출 때 버튼을 가장 적게 누르는 횟수 = %d\n",Compare_plus_minus_100(button_count,cmp_plus_count,cmp_minus_count,Compare_100(channel_int),channel_count));
 
 	return 0;
 }
@@ -462,39 +525,19 @@ int Compare_100(int x)
 	return abs(x-100);
 }
 
-int Compare_plus_minus_100(int b,int p,int m,int c,int cc)
+int Compare_plus_minus_100(int p,int m,int c)
 {
-	if(b == 10)
+	if(p > m && c > m)
+	{
+		return m;
+	}
+	else if(p > c && m > c)
 	{
 		return c;
 	}
-	else if(b == 0 && c > cc)
-	{
-		return cc;
-	}
-	else if(b == 0 && cc > c)
-	{
-		return c;
-	}
-	else if(b !=0 && b != 10 && p > m && c > m)
-	{
-		return m;		
-	}
-	else if(b !=0 && b != 10 && m > p && c > p)
-	{
-		return p;		
-	}
-	else if(b !=0 && b != 10 && m > c && p > c)
-	{
-		return c;		
-	}
-	else if(b !=0 && b != 10 && m == p && c > p)
+	else if(c > p && m > p)
 	{
 		return p;
-	}
-	else if(b !=0 && b != 10 && m == p && p > c)
-	{
-		return c;
 	}
 }
 
