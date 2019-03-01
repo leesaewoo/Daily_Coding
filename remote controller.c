@@ -152,7 +152,7 @@ int main(void)
 					cmp_plus += pow(10, channel_count - 1) * *(pa + *pcc);
 					counter++;
 				}
-				else if(*(pa + *pcc) == -1 && *pcc != 0)
+				else if(*(pa + *pcc) == -1 && *pcc != 0) // 같지않으면 
 				{
 					for(j = 1 ; j <= *pcc ; j++)
 					{
@@ -168,25 +168,23 @@ int main(void)
 									counter++;
 								}								
 							}
-							cmp_plus_count = abs(cmp_plus - channel_int) + counter;
 							i = channel_count;
 							break;
 						}
-						else if(*pcc - j <= 0) // 첫 번째 자리에 가능한 수가 0보다 작거나 같을 경우 
+						else if(*pcc - j <= 0 && channel_count > 1) // 첫 번째 자리에 가능한 수가 0보다 작거나 같을 경우 
 						{
-							for(k = channel_count - i - 2 ; k >= 0  ; k--)
+							for(k = channel_count - 2 ; k >= 0  ; k--)
 							{
 								cmp_plus += pow(10, k) * array_max;
 								counter++;
 							}
-							cmp_plus_count = abs(cmp_plus - channel_int) + counter;
 							i = channel_count;
 						}
 					}
 				}
-				else if(*pcc = 0 && *(pa + *pcc) == -1) // 원하는 채널이 0 일 경우
+				else if(*pcc == 0 && *(pa + *pcc) == -1) // 원하는 채널이 0 일 경우
 				{
-					cmp_plus_count = 9999999;
+					cmp_plus = 9999999;
 					i = channel_count;
 				}
 			}
@@ -199,7 +197,7 @@ int main(void)
 				}
 				else if(*(pa + *(pcc + i)) == -1) //다를 때 
 				{
-					for(j = 1 ; j <= *(pcc + i) ; j++) // 작은 수 중 검색 
+					for(j = 0 ; j <= *(pcc + i) ; j++) // 작은 수 중 검색 
 					{
 						if(*(pa + *(pcc + i) - j) != -1) // 작은 수 중 가장 큰 수 있음 
 						{
@@ -213,7 +211,6 @@ int main(void)
 									counter++;
 								}								
 							}
-							cmp_plus_count = abs(cmp_plus - channel_int) + counter;
 							i = channel_count;
 							break;
 						}
@@ -238,10 +235,17 @@ int main(void)
 									}
 								}
 							}
-							if(*(pa + *(pcc + i - k) - L) == -1 && L == *(pcc + i - k)) // 없으면 꽝 
+							if(i != channel_count) // 없으면 전체 한자리수 낮은 max 도배
 							{
-								cmp_plus_count = 9999999;
+								counter = 0;
+								cmp_plus = 0;
+								for(k = channel_count - 2 ; k >= 0  ; k--)
+								{
+									cmp_plus += pow(10, k) * array_max;
+									counter++;
+								}
 								i = channel_count;
+								break; 
 							}
 						}
 					}
@@ -264,9 +268,9 @@ int main(void)
 					cmp_minus += pow(10, channel_count - 1) * *(pa + *pcc);
 					counter++;
 				}
-				else if(*(pa + *pcc) == -1 && channel_count != 6) // 채널이 6자리가 아닐 때 
+				else if(*(pa + *pcc) == -1 && channel_count != 6) // 채널이 같지않고 6자리가 아닐 때 
 				{
-					for(j = 1 ; j <= 9 - *pcc ; j++)
+					for(j = 0 ; j <= 9 - *pcc ; j++)
 					{
 						if(*(pa + *pcc + j) != -1) // 큰 수 중 가장 작은 수 
 						{
@@ -288,20 +292,22 @@ int main(void)
 						{
 							if(channel_count == 5) // 채널의 자릿수가 5일 경우 채널의 최대치가 500000임을 유의 
 							{
-								for(k = 0 ; k < 6  ; k++)
+								for(k = 1 ; k < 6  ; k++)
 								{
-									if(*(pa +*(pcc + i) + k) != -1 && k != 5) // 맨 앞자리에 가능한 버튼이 5 미만일 경우 
+									if(*(pa + k) != -1 && k != 5) // 맨 앞자리에 가능한 버튼이 5 미만일 경우 
 									{
-										for(L = 0 ; L <= channel_count ; L++)
+										cmp_minus += pow(10, channel_count) * *(pa + k);
+										counter++;											
+										for(L = 1 ; L <= channel_count ; L++)
 										{
-											cmp_minus += pow(10, channel_count - L) * *(pa + *(pcc + i) +k);
-											counter++;									
+											cmp_minus += pow(10, channel_count - L) * array_min1;
+											counter++;
 										}
 										cmp_minus_count = abs(cmp_minus - channel_int) + counter;
 										i = channel_count;
 										break;
 									}
-									else if(*(pa + *(pcc + i) + k) != -1 && k == 5) // 맨 앞자리에 가능한 버튼이 5일 경우 
+									else if(*(pa + k) != -1 && k == 5) // 맨 앞자리에 가능한 버튼이 5일 경우 
 									{
 										if(array_min1 == 0)
 										{
@@ -311,8 +317,14 @@ int main(void)
 											i = channel_count;
 											break;
 										}
+										else
+										{
+											cmp_minus_count = 9999999;
+											i = channel_count;
+											break;											
+										}
 									}
-									else if(*(pa + *(pcc + i) + k) == -1 && k == 5) // 맨 앞자리에 가능한 버튼이 5보다 클 경우
+									else if(*(pa + k) == -1 && k == 5) // 맨 앞자리에 가능한 버튼이 5보다 클 경우
 									{
 										cmp_minus_count = 9999999;
 										i = channel_count;
@@ -321,10 +333,11 @@ int main(void)
 								}
 								cmp_minus_count = abs(cmp_minus - channel_int) + counter;
 								i = channel_count;
+								break;
 							}
 							else
 							{
-								for(k = channel_count ; k < channel_count ; k++)
+								for(k = channel_count ; k >= 0 ; k--)
 								{
 									if(k == channel_count)
 									{
@@ -339,6 +352,7 @@ int main(void)
 								}
 								cmp_minus_count = abs(cmp_minus - channel_int) + counter;
 								i = channel_count;
+								break;
 							}
 							break;
 						}
@@ -399,7 +413,7 @@ int main(void)
 				}
 				else if(*(pa + *(pcc + i)) == -1) //다를 때 
 				{
-					for(j = 1 ; j <= 10 - *(pcc + i) ; j++) // 큰 수 중 검색 
+					for(j = 0 ; j <= 9 - *(pcc + i) ; j++) // 큰 수 중 검색 
 					{
 						if(*(pa + *(pcc + i) + j) != -1) // 큰 수 중 가장 작은 수 있음 
 						{
@@ -417,7 +431,7 @@ int main(void)
 							i = channel_count;
 							break;
 						}
-						else if(j == 10 - *(pcc + i)) // 큰 수 중 가장 작은 수 없음 
+						else if(j == 9 - *(pcc + i)) // 큰 수 중 가장 작은 수 없음 
 						{
 							for(k = 1 ; k <= i ; k++)
 							{
@@ -438,11 +452,27 @@ int main(void)
 									}
 								}
 							}
-							if(*(pa + *(pcc + i - k) + L) == -1 && L == 10 - *(pcc + i - k)) // 없으면 꽝 
+							if(i != channel_count) // 없으면 한자리수 많은 수에서 -
 							{
-								cmp_minus_count = 9999999;
+								counter = 0;
+								cmp_minus = 0;
+								for(k = channel_count ; k >= 0 ; k--)
+								{
+									if(k == channel_count)
+									{
+										cmp_minus += pow(10, k) * array_min2;
+										counter++;
+									}
+									else
+									{
+										cmp_minus += pow(10, k) * array_min1;
+										counter++;
+									}
+								}
 								i = channel_count;
+								break;
 							}
+							break;
 						}
 					}
 				}
@@ -527,15 +557,15 @@ int Compare_100(int x)
 
 int Compare_plus_minus_100(int p,int m,int c)
 {
-	if(p > m && c > m)
+	if(p >= m && c >= m)
 	{
 		return m;
 	}
-	else if(p > c && m > c)
+	else if(p >= c && m >= c)
 	{
 		return c;
 	}
-	else if(c > p && m > p)
+	else if(c >= p && m >= p)
 	{
 		return p;
 	}
