@@ -8,7 +8,7 @@ int Compare_100(); //100¿¡¼­ +-·Î¸¸ ¿øÇÏ´Â Ã¤³Î ¸ÂÃß´Â °æ¿ì¿¡ ¹öÆ° ´©¸¥ È½¼ö ±¸Ç
 int Compare_plus_minus_100(); //°¡Àå Àû°Ô ´©¸¥ È½¼ö ±¸ÇÏ´Â ÇÔ¼ö 
 
 // TO DO LIST (20190301)
-// 293 line .. Ã¹Â°ÀÚ¸® && channel_count = 6 ÀÏ¶§ 
+// 353 line .. µÎ¹øÂ° ÀÚ¸®ºÎÅÍ °è»êÇÏ´Â°Å + - µÑ ´Ù ¸¸µé¾î¾ßÇÔ.. 
  
 int main(void)
 {
@@ -23,7 +23,8 @@ int main(void)
  	int array[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
 	int *pa = array;
 	int array_max; // °íÀå³­ ¹öÆ°À» Á¦¿ÜÇÏ°í °¡Àå Å« ¹öÆ° °ª
-	int array_min1, array_min2 = -1; // °íÀå³­ ¹öÆ°À» Á¦¿ÜÇÏ°í °¡Àå ÀÛÀº ¹öÆ° °ª
+	int array_min1 = -1; // °íÀå³­ ¹öÆ°À» Á¦¿ÜÇÏ°í °¡Àå ÀÛÀº ¹öÆ° °ª
+	int array_min2 = -1; // °íÀå³­ ¹öÆ°À» Á¦¿ÜÇÏ°í °¡Àå ÀÛÀº ¹öÆ° °ª
 	int button_push; // ¿øÇÏ´Â Ã¤³ÎÀ» º¸±â À§ÇØ °¡Àå Àû°Ô ¹öÆ°À» ´©¸¥ È½¼ö 
 
 	while(1)
@@ -74,7 +75,22 @@ int main(void)
 	{
 		if(*(pa+i) != -1 && array_min1 == -1)
 		{
-			array_min1 = *(pa+i);
+			if(i == 9 && array_min1 == -1)
+			{
+				array_min1 = *(pa+i);
+				array_min2 = array_min1;
+				break;
+			}
+			else if(button_count == 9)
+			{
+				array_min1 = *(pa+i);
+				array_min2 = array_min1;
+				break;
+			}
+			else
+			{
+				array_min1 = *(pa+i);		
+			}
 		}
 		else if(*(pa+i) != -1 && array_min1 != -1)
 		{
@@ -260,11 +276,11 @@ int main(void)
 									{
 										cmp_minus_count = 9999999;
 										i = channel_count;
-										break;										
-									} 
+										break;
+									}
 								}
 								cmp_minus_count = abs(cmp_minus - channel_int) + counter;
-								i = channel_count;								
+								i = channel_count;
 							}
 							else
 							{
@@ -273,7 +289,7 @@ int main(void)
 									if(k == channel_count)
 									{
 										cmp_minus += pow(10, k) * array_min2;
-										counter++;									
+										counter++;
 									}
 									else
 									{
@@ -290,10 +306,51 @@ int main(void)
 				}
 				else if(*(pa + *pcc) == -1 && channel_count == 6) // Ã¤³ÎÀÌ 6ÀÚ¸® ÀÏ ¶§ 
 				{
-					
+					if(*pcc = 5)
+					{
+						cmp_minus_count = 9999999;
+						i = channel_count;
+					}
+					else if(*pcc < 5)
+					{
+						for(j = 1; j <= 5 - *pcc ; j++)
+						{
+							if(*(pa + *pcc + j) != -1)
+							{
+								if(*(pa + *pcc + j) == 5)
+								{
+									if(array_min1 !=0)
+									{
+										cmp_minus_count = 9999999;
+										i = channel_count;
+									}
+									else if(array_min1 == 0)
+									{
+										cmp_minus = 500000;
+										cmp_minus_count = abs(cmp_minus - channel_int) + 6;
+										i = channel_count;
+									}
+								}
+								else if(*(pa + *pcc + j) < 5)
+								{
+									cmp_minus += pow(10, channel_count -1) * *(pa + *pcc + j);
+									for(k = 1 ; k <= channel_count ; k++)
+									{
+										cmp_minus += pow(10, channel_count -k -1) * array_min1;
+									}
+									i = channel_count;
+								}
+								else
+								{
+									cmp_minus_count = 9999999;
+									i = channel_count;
+								}
+							}
+						}
+					}
 				}
 			}
-			else // ³ª¸ÓÁö ÀÚ¸®´Â °°°Å³ª ÀÛÀº ¼ö Áß °¡Àå Å« ¼ö 
+			else // ³ª¸ÓÁö ÀÚ¸®´Â °°°Å³ª Å« ¼ö Áß °¡Àå ÀÛÀº ¼ö 
 			{
 				if(*(pa + *(pcc + i)) != -1) // °°À» ¶§ 
 				{
@@ -304,7 +361,7 @@ int main(void)
 				{
 					for(j = 1 ; j <= *(pcc + i) ; j++)
 					{
-						if(*(pa + *(pcc + i) - j) != -1 && j != *(pcc + i)) // ÀÛÀº ¼ö Áß °¡Àå Å« ¼ö 
+						if(*(pa + *(pcc + i) + j) != -1 && j != *(pcc + i)) // Å« ¼ö Áß °¡Àå ÀÛÀº ¼ö 
 						{
 							cmp_minus += pow(10, channel_count - i -1) * *(pa + *(pcc + i) - j);
 							counter++;
