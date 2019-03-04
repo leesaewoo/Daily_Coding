@@ -1,17 +1,18 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 
 //TO DO LIST//
-// 1. *pn, *pp, *pT 에 제대로 입력됐는지 확인하는 코드 짜야함
-// 2. T == 1 일 때 *pn에 값 입력 시 체크용 아웃풋 무한루프 현상 발생
-// 3. line 31~43 에서 에러 발생 
+// 1. 배열의 원소가 0~100 사이의 정수 이므로, 원소가 두자리, 세자리 일 때 pT 값 구하는 알고리즘 짜야함 
+// 2. 현재 p값을 자연수로 받고 있는데, p값은 R과D로 이루어진 문자열임, 수정해야함 
+// 3. 입력된 p값에 따라 해당 case의 배열을 연산하는 알고리즘과 최종 OUTPUT 알고리즘 짜야함 
 
 void R(int *array, int *length); // R(뒤집기) 함수 선언
 void D(int *array, int *length); // D(버리기) 함수 선언 
 
 int main(void)
 {
-	int i, j;
+	int i, j, k;
 	int T; // T는 Test case
 	while(1)
 	{
@@ -30,19 +31,31 @@ int main(void)
 	int **pT = (int**)malloc(sizeof(int) * T);
 	for(i = 0 ; i < T ; i++)
 	{
-		scanf("%d", *(pp + i));
-		scanf("%d", *(pn + i));
+		scanf("%d", (pp + i));
+		scanf("%d", (pn + i));
 		*(pT + i) = (int*)malloc(sizeof(int) * *(pn + i));
-		char *pTemp = (char*)malloc(sizeof(char) * ((*(pn + i) * 2) + 1));
-		scanf("%[^\n]s", *pTemp);
+		char *pTemp;
+		pTemp = (char*)malloc(sizeof(char) * ((*(pn + i) * 2) + 1));
+		scanf(" %[^\n]s", pTemp);
 		for(j = 0 ; j < *(pn + i) ; j++)
 		{
 			*(*(pT + i) + j) = *(pTemp + 2 * j + 1) - '0';
 		}
+		
+		for(k = 0 ; k < *(pn + i) * 2 + 1 ; k++) // OUTPUT FOR CHECK
+		{
+			printf("*(pTemp + %d) = %c\n", k, *(pTemp + k));
+		}
+		
 		free(pTemp);
 	}
 	
 ///////////////////////////// OUTPUT FOR CHECK /////////////////////////////
+	printf("T = %d\n", T);
+	for(i = 0; i < T ; i++)
+	{
+		printf("(pn + %d) = %d\n", i, *(pn + i));
+	}
 	for(i = 0 ; i < T ; i++)
 	{
 		for(j = 0 ; j < *(pn + i) ; j++)
@@ -51,9 +64,9 @@ int main(void)
 		}
 	}
 	
-	free(pn); // *pn 동적할당 해제 
+	free(pn); // *pn 동적할당 해제
 	free(pp); // *pp 동적할당 해제
-	for(i = 0 ; i < T ; i++) // *pT 동적할당 해제 
+	for(i = 0 ; i < T ; i++) // *pT 동적할당 해제
 	{
 		free(*(pT + i));
 	}
@@ -84,10 +97,6 @@ void D(int *array, int *length)
 		for(i = 0 ; i < *length ; i++)
 		{
 			*(array + i) = *(array + i + 1);
-			if(i == *length - 1)
-			{
-				*(array + i + 1) = 0;
-			}
 		}
 		*length--;
 	}
