@@ -3,9 +3,9 @@
 
 
 //TO DO LIST//
-// 1. 배열의 원소가 0~100 사이의 정수 이므로, 원소가 두자리, 세자리 일 때 pT 값 구하는 알고리즘 짜야함 
-// 2. 현재 p값을 자연수로 받고 있는데, p값은 R과D로 이루어진 문자열임, 수정해야함 
-// 3. 입력된 p값에 따라 해당 case의 배열을 연산하는 알고리즘과 최종 OUTPUT 알고리즘 짜야함 
+// 1. 현재 p값을 자연수로 받고 있는데, p값은 R과D로 이루어진 문자열임, 수정해야함 
+// 2. 입력된 p값에 따라 해당 case의 배열을 연산하는 알고리즘과 최종 OUTPUT 알고리즘 짜야함 
+
 
 void R(int *array, int *length); // R(뒤집기) 함수 선언
 void D(int *array, int *length); // D(버리기) 함수 선언 
@@ -35,18 +35,40 @@ int main(void)
 		scanf("%d", (pn + i));
 		*(pT + i) = (int*)malloc(sizeof(int) * *(pn + i));
 		char *pTemp;
-		pTemp = (char*)malloc(sizeof(char) * ((*(pn + i) * 2) + 1));
+		pTemp = (char*)malloc(sizeof(char) * ((*(pn + i) * 4) + 1));
 		scanf(" %[^\n]s", pTemp);
-		for(j = 0 ; j < *(pn + i) ; j++)
+		int temp = 0;
+		for(j = 1, k = 0 ; k < *(pn + i) ; k++) // 입력받은 배열값을  **pT(2차원 배열)에 입력 
 		{
-			*(*(pT + i) + j) = *(pTemp + 2 * j + 1) - '0';
+			if(*(pTemp + j) != ',')
+			{
+				if(*(pTemp + j + 1) == ',' || *(pTemp + j + 1) == ']')
+				{
+					temp += (*(pTemp + j) - '0');
+					*(*(pT + i) + k) = temp;
+					temp = 0;
+					j += 2;
+				}
+				else if(*(pTemp + j + 2) == ',' || *(pTemp + j + 2) == ']')
+				{
+					temp += (*(pTemp + j) - '0') * 10;
+					temp += (*(pTemp + j + 1) - '0');
+					*(*(pT + i) + k) = temp;
+					temp = 0;
+					j += 3;
+				}
+				else if(*(pTemp + j + 3) == ',' || *(pTemp + j + 3) == ']')
+				{
+					*(*(pT + i) + k) = 100;
+					j += 4;
+				}
+			}
+			else if(*(pTemp + j) == ']')
+			{
+				break;
+			}
 		}
-		
-		for(k = 0 ; k < *(pn + i) * 2 + 1 ; k++) // OUTPUT FOR CHECK
-		{
-			printf("*(pTemp + %d) = %c\n", k, *(pTemp + k));
-		}
-		
+
 		free(pTemp);
 	}
 	
