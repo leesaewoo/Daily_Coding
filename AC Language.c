@@ -3,8 +3,8 @@
 
 
 //TO DO LIST//
-// 1. 현재 p값을 자연수로 받고 있는데, p값은 R과D로 이루어진 문자열임, 수정해야함 
-// 2. 입력된 p값에 따라 해당 case의 배열을 연산하는 알고리즘과 최종 OUTPUT 알고리즘 짜야함 
+// 1. 입력된 p값에 따라 해당 case의 배열을 연산하는 알고리즘
+// 2. 최종 OUTPUT 알고리즘 
 
 
 void R(int *array, int *length); // R(뒤집기) 함수 선언
@@ -25,13 +25,13 @@ int main(void)
 	
 	int *pn;
 	pn = (int*)malloc(sizeof(int) * T); // 각 test case 의 n 값을 넣을 공간(배열) 할당 
-	int *pp;
-	pp = (int*)malloc(sizeof(int) * T); // 각 test case 의 p 값을 넣을 공간(배열) 할당 
+	char **pp = (char**)malloc(sizeof(char) * T); // 각 test case 의 p 값을 넣을 공간(배열) 할당 
 	
 	int **pT = (int**)malloc(sizeof(int) * T);
 	for(i = 0 ; i < T ; i++)
 	{
-		scanf("%d", (pp + i));
+		*(pp + i) = (char*)malloc(sizeof(char) * 100000);
+		scanf(" %[^\n]s", *(pp + i));
 		scanf("%d", (pn + i));
 		*(pT + i) = (int*)malloc(sizeof(int) * *(pn + i));
 		char *pTemp;
@@ -74,7 +74,22 @@ int main(void)
 	
 ///////////////////////////// OUTPUT FOR CHECK /////////////////////////////
 	printf("T = %d\n", T);
-	for(i = 0; i < T ; i++)
+	for(i = 0 ; i < T ; i++)
+	{
+		for(j = 0 ; ; j++)
+		{
+			if(*(*(pp + i) + j) != 'R' && *(*(pp + i) + j) != 'D')
+			{
+				i = T;
+				break;
+			}
+			else
+			{
+				printf("*(*(pp + %d) + %d) = %c\n", i, j, *(*(pp + i) + j));
+			}
+		}
+	}
+	for(i = 0 ; i < T ; i++)
 	{
 		printf("(pn + %d) = %d\n", i, *(pn + i));
 	}
@@ -87,10 +102,11 @@ int main(void)
 	}
 	
 	free(pn); // *pn 동적할당 해제
-	free(pp); // *pp 동적할당 해제
-	for(i = 0 ; i < T ; i++) // *pT 동적할당 해제
+
+	for(i = 0 ; i < T ; i++) // *pT, *pp 동적할당 해제
 	{
 		free(*(pT + i));
+		free(*(pp + i));
 	}
 
 	return 0;
