@@ -4,7 +4,8 @@
 
 //TO DO LIST//
 // 1. 입력된 p값에 따라 해당 case의 배열을 연산하는 알고리즘
-// 2. 최종 OUTPUT 알고리즘 
+// 2. 1번 함수 오류 수정하기 (R함수에 문제있는듯) 
+// 3. 최종 OUTPUT 알고리즘 
 
 
 void R(int *array, int *length); // R(뒤집기) 함수 선언
@@ -31,12 +32,12 @@ int main(void)
 	for(i = 0 ; i < T ; i++)
 	{
 		*(pp + i) = (char*)malloc(sizeof(char) * 100000);
-		scanf(" %[^\n]s", *(pp + i));
-		scanf("%d", (pn + i));
+		scanf(" %[^\n]s", *(pp + i)); // 1 <= pp <= 100000
+		scanf("%d", (pn + i)); // 0 <= pn <= 100000
 		*(pT + i) = (int*)malloc(sizeof(int) * *(pn + i));
 		char *pTemp;
 		pTemp = (char*)malloc(sizeof(char) * ((*(pn + i) * 4) + 1));
-		scanf(" %[^\n]s", pTemp);
+		scanf(" %[^\n]s", pTemp); // 1 <= 배열에 들어가는 수 <=100
 		int temp = 0;
 		for(j = 1, k = 0 ; k < *(pn + i) ; k++) // 입력받은 배열값을  **pT(2차원 배열)에 입력 
 		{
@@ -72,6 +73,33 @@ int main(void)
 		free(pTemp);
 	}
 	
+	
+	for(i = 0 ; i < T ; i++)
+	{
+		//i 번째 케이스에 대해서 pp 함수 순차적 수행 후 출력 (error 나올 시 이후 함수 수행 중단)
+		for(j = 0; ; j++)
+		{
+			if(*(*(pp + i) + j) == 'R')
+			{
+				R(*(pT + i) + j, pn + i);
+			}
+			else if(*(*(pp + i) + j) == 'D' && *(pn + i) != 0)
+			{
+				D(*(pT + i) + j, pn + i);
+			}
+			else if(*(*(pp + i) + j) == 'D' && *(pn + i) == 0)
+			{
+				//error 출력하는 스위치 ON 
+				break;
+			}
+			else if(*(*(pp + i) + j) == '0')
+			{
+				break;
+			}
+		}
+		// pp 함수를 모두 수행한 배열 출력 
+	}
+
 ///////////////////////////// OUTPUT FOR CHECK /////////////////////////////
 	printf("T = %d\n", T);
 	for(i = 0 ; i < T ; i++)
@@ -130,16 +158,12 @@ void R(int *array, int *length)
 void D(int *array, int *length)
 {
 	int i;
-	if(*length != 0)
+	if(*length != 0) // 이 조건문이 필요하지 않을듯? 
 	{
 		for(i = 0 ; i < *length ; i++)
 		{
 			*(array + i) = *(array + i + 1);
 		}
-		*length--;
-	}
-	else if(*length == 0)
-	{
-		printf("error\n"); // ***에러출력**** 
+		(*length)--;
 	}
 }
