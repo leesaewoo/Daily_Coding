@@ -1,12 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-
 //TO DO LIST//
-// 1. 입력된 p값에 따라 해당 case의 배열을 연산하는 알고리즘
-// 2. 1번 함수 오류 수정하기 (R함수에 문제있는듯) 
-// 3. 최종 OUTPUT 알고리즘 
-
 
 void R(int *array, int *length); // R(뒤집기) 함수 선언
 void D(int *array, int *length); // D(버리기) 함수 선언 
@@ -14,6 +9,7 @@ void D(int *array, int *length); // D(버리기) 함수 선언
 int main(void)
 {
 	int i, j, k;
+	int errorcheck = 0;
 	int T; // T는 Test case
 	while(1)
 	{
@@ -81,26 +77,51 @@ int main(void)
 		{
 			if(*(*(pp + i) + j) == 'R')
 			{
-				R(*(pT + i) + j, pn + i);
+				R(*(pT + i), pn + i);
 			}
 			else if(*(*(pp + i) + j) == 'D' && *(pn + i) != 0)
 			{
-				D(*(pT + i) + j, pn + i);
+				D(*(pT + i), pn + i);
 			}
 			else if(*(*(pp + i) + j) == 'D' && *(pn + i) == 0)
 			{
-				//error 출력하는 스위치 ON 
+				errorcheck = 1; //error 출력하는 스위치 ON 
 				break;
 			}
-			else if(*(*(pp + i) + j) == '0')
+			else if(*(*(pp + i) + j + 1) == 0)
 			{
 				break;
 			}
 		}
-		// pp 함수를 모두 수행한 배열 출력 
+
+		if(errorcheck == 1)	// pp 함수를 모두 수행한 배열 출력
+		{
+			printf("error\n");
+			errorcheck = 0;
+		}
+		else if(errorcheck == 0 && *(pn + i) == 0)
+		{
+			printf("[]\n");
+		}
+		else if(errorcheck == 0)
+		{
+			printf("[");
+			for(j = 0 ; j < *(pn + i) ; j++) 
+			{
+				if(j == *(pn + i) - 1)
+				{
+				printf("%d", *(*(pT + i) + j));
+				printf("]\n");
+				break;
+				}
+				printf("%d", *(*(pT + i) + j));
+				printf(",");
+			}
+		}
 	}
 
 ///////////////////////////// OUTPUT FOR CHECK /////////////////////////////
+	printf("pT = %d\n",*(*(pT)+2));
 	printf("T = %d\n", T);
 	for(i = 0 ; i < T ; i++)
 	{
@@ -128,6 +149,7 @@ int main(void)
 			printf("*(*(pT + %d) + %d) = %d\n", i, j, *(*(pT + i) + j));
 		}
 	}
+///////////////////////////// OUTPUT FOR CHECK /////////////////////////////
 	
 	free(pn); // *pn 동적할당 해제
 
@@ -151,17 +173,23 @@ void R(int *array, int *length)
 			tempR = *(array+i);
 			*(array + i) = *(array + *length - i - 1);
 			*(array + *length -i -1) = tempR;
-		}
+		} 
 	}
 }
 
 void D(int *array, int *length)
 {
 	int i;
-	if(*length != 0) // 이 조건문이 필요하지 않을듯? 
+	if(*length != 0) // 이 조건문이 필요하지 않을듯?
 	{
 		for(i = 0 ; i < *length ; i++)
 		{
+			if(i == *length - 1)
+			{
+			*(array + i) = *(array + i + 1);
+			*(array + i + 1) = 0;
+			break;
+			}
 			*(array + i) = *(array + i + 1);
 		}
 		(*length)--;
