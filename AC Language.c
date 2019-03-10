@@ -1,9 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-//TO DO LIST//
-//1. R, D 함수의 timecomplexity O(n)에서 O(1)으로 바꿨음! 
-//TO DO LIST// 
 
 void R(int *length); // R(뒤집기) 함수 선언
 void D(int *length); // D(버리기) 함수 선언 
@@ -42,7 +39,8 @@ int main(void)
 		pTemp = (char*)malloc(sizeof(char) * ((*(pn + i) * 4) + 1));
 		scanf(" %[^\n]s", pTemp); // 1 <= 배열에 들어가는 수 <=100
 		int temp = 0;
-		for(j = 1, k = 0 ; k < *(pn + i) ; k++) // 입력받은 배열값을  **pT(2차원 배열)에 입력 
+		j = 1;
+		for(k = 0 ; k < *(pn + i) ; k++) // 입력받은 배열값을  **pT(2차원 배열)에 입력 
 		{
 			if(*(pTemp + j) != ',')
 			{
@@ -72,8 +70,7 @@ int main(void)
 				break;
 			}
 		}
-
-		free(pTemp);
+		free(pTemp); // *pTemp 동적할당 해제 
 	}
 	
 	
@@ -105,7 +102,7 @@ int main(void)
 			}
 		}
 
-		if(error_check == 1)	// pp 함수를 모두 수행(O(1)로 바꿈!)한 배열 출력
+		if(error_check == 1)	// pp 함수를 모두 수행한 배열 출력
 		{
 			printf("error\n");
 			error_check = 0;
@@ -121,12 +118,15 @@ int main(void)
 			{
 				if(j == D_check_e - 1)
 				{
-				printf("%d", *(*(pT + i) + j));
-				printf("]\n");
-				break;
+					printf("%d", *(*(pT + i) + j));
+					printf("]\n");
+					break;
 				}
-				printf("%d", *(*(pT + i) + j));
-				printf(",");
+				else
+				{
+					printf("%d", *(*(pT + i) + j));
+					printf(",");
+				} 
 			}
 		}
 		else if(error_check == 0 && R_check == -1)
@@ -140,8 +140,11 @@ int main(void)
 				printf("]\n");
 				break;
 				}
-				printf("%d", *(*(pT + i) + j));
-				printf(",");
+				else
+				{
+					printf("%d", *(*(pT + i) + j));
+					printf(",");
+				}
 			}
 		}
 	}
@@ -157,30 +160,24 @@ int main(void)
 	return 0;
 }
 
-void R(int *length) // timecomplexity = O(n), need O(1)
+void R(int *length) // timecomplexity = O(1)
 {
 	if(*length != 0)
 	{
-		R_check *= -1; // 하나의 test case 가 끝날 때 1로 초기화 해야함 
+		R_check *= -1; // 하나의 test case 가 끝날 때 1로 초기화 해야함
 	}
 }
 
-void D(int *length) // timecomplexity = O(n), need O(1)
+void D(int *length) // timecomplexity = O(1)
 {
 	if(R_check == -1)
 	{
-		if(*length != 0)
-		{
-			D_check_e--;
-			(*length)--;
-		}
+		D_check_e--;
+		*length = *length - 1;
 	}
 	else if(R_check == 1)
 	{
-		if(*length != 0)
-		{
-			D_check_s++;
-			(*length)--;
-		}
+		D_check_s++;
+		*length = *length - 1;
 	}
 }
