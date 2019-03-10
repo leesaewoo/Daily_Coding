@@ -2,14 +2,21 @@
 #include <stdlib.h>
 
 //TO DO LIST//
+//1. R, D 함수의 timecomplexity O(n)에서 O(1)으로 바꿨음! 
+//TO DO LIST// 
 
-void R(int *array, int *length); // R(뒤집기) 함수 선언
-void D(int *array, int *length); // D(버리기) 함수 선언 
+void R(int *length); // R(뒤집기) 함수 선언
+void D(int *length); // D(버리기) 함수 선언 
+
+int R_check = 1;
+int D_check_s; // test case가 바뀔 때 마다 0으로 초기화 해야함 
+int D_check_e; // 해당 test case 의 *pn 값으로 초기화 해야함 
 
 int main(void)
 {
 	int i, j, k;
-	int errorcheck = 0;
+	int error_check = 0;
+
 	int T; // T는 Test case
 	while(1)
 	{
@@ -70,22 +77,26 @@ int main(void)
 	}
 	
 	
+	//i 번째 케이스에 대해서 pp 함수 순차적 수행 후 출력 (error 나올 시 이후 함수 수행 중단)
 	for(i = 0 ; i < T ; i++)
 	{
-		//i 번째 케이스에 대해서 pp 함수 순차적 수행 후 출력 (error 나올 시 이후 함수 수행 중단)
+		R_check = 1;
+		D_check_s = 0;
+		D_check_e = *(pn + i);
+		
 		for(j = 0; ; j++)
 		{
 			if(*(*(pp + i) + j) == 'R')
 			{
-				R(*(pT + i), pn + i);
+				R(pn + i);
 			}
 			else if(*(*(pp + i) + j) == 'D' && *(pn + i) != 0)
 			{
-				D(*(pT + i), pn + i);
+				D(pn + i);
 			}
 			else if(*(*(pp + i) + j) == 'D' && *(pn + i) == 0)
 			{
-				errorcheck = 1; //error 출력하는 스위치 ON 
+				error_check = 1; //error 출력하는 스위치 ON 
 				break;
 			}
 			else if(*(*(pp + i) + j + 1) == 0)
@@ -94,21 +105,36 @@ int main(void)
 			}
 		}
 
-		if(errorcheck == 1)	// pp 함수를 모두 수행한 배열 출력
+		if(error_check == 1)	// pp 함수를 모두 수행(O(1)로 바꿈!)한 배열 출력
 		{
 			printf("error\n");
-			errorcheck = 0;
+			error_check = 0;
 		}
-		else if(errorcheck == 0 && *(pn + i) == 0)
+		else if(error_check == 0 && *(pn + i) == 0)
 		{
 			printf("[]\n");
 		}
-		else if(errorcheck == 0)
+		else if(error_check == 0 && R_check == 1)
 		{
 			printf("[");
-			for(j = 0 ; j < *(pn + i) ; j++) 
+			for(j = D_check_s ; j < D_check_e ; j++) 
 			{
-				if(j == *(pn + i) - 1)
+				if(j == D_check_e - 1)
+				{
+				printf("%d", *(*(pT + i) + j));
+				printf("]\n");
+				break;
+				}
+				printf("%d", *(*(pT + i) + j));
+				printf(",");
+			}
+		}
+		else if(error_check == 0 && R_check == -1)
+		{
+			printf("[");
+			for(j = D_check_e - 1 ; j >= D_check_s ; j--) 
+			{
+				if(j == D_check_s)
 				{
 				printf("%d", *(*(pT + i) + j));
 				printf("]\n");
@@ -119,37 +145,6 @@ int main(void)
 			}
 		}
 	}
-
-///////////////////////////// OUTPUT FOR CHECK /////////////////////////////
-	printf("pT = %d\n",*(*(pT)+2));
-	printf("T = %d\n", T);
-	for(i = 0 ; i < T ; i++)
-	{
-		for(j = 0 ; ; j++)
-		{
-			if(*(*(pp + i) + j) != 'R' && *(*(pp + i) + j) != 'D')
-			{
-				i = T;
-				break;
-			}
-			else
-			{
-				printf("*(*(pp + %d) + %d) = %c\n", i, j, *(*(pp + i) + j));
-			}
-		}
-	}
-	for(i = 0 ; i < T ; i++)
-	{
-		printf("(pn + %d) = %d\n", i, *(pn + i));
-	}
-	for(i = 0 ; i < T ; i++)
-	{
-		for(j = 0 ; j < *(pn + i) ; j++)
-		{
-			printf("*(*(pT + %d) + %d) = %d\n", i, j, *(*(pT + i) + j));
-		}
-	}
-///////////////////////////// OUTPUT FOR CHECK /////////////////////////////
 	
 	free(pn); // *pn 동적할당 해제
 
@@ -162,36 +157,30 @@ int main(void)
 	return 0;
 }
 
-void R(int *array, int *length)
+void R(int *length) // timecomplexity = O(n), need O(1)
 {
-	int i;
-	int tempR;
 	if(*length != 0)
 	{
-		for(i = 0 ; i < *length / 2 ; i++)
-		{
-			tempR = *(array+i);
-			*(array + i) = *(array + *length - i - 1);
-			*(array + *length -i -1) = tempR;
-		} 
+		R_check *= -1; // 하나의 test case 가 끝날 때 1로 초기화 해야함 
 	}
 }
 
-void D(int *array, int *length)
+void D(int *length) // timecomplexity = O(n), need O(1)
 {
-	int i;
-	if(*length != 0) // 이 조건문이 필요하지 않을듯?
+	if(R_check == -1)
 	{
-		for(i = 0 ; i < *length ; i++)
+		if(*length != 0)
 		{
-			if(i == *length - 1)
-			{
-			*(array + i) = *(array + i + 1);
-			*(array + i + 1) = 0;
-			break;
-			}
-			*(array + i) = *(array + i + 1);
+			D_check_e--;
+			(*length)--;
 		}
-		(*length)--;
+	}
+	else if(R_check == 1)
+	{
+		if(*length != 0)
+		{
+			D_check_s++;
+			(*length)--;
+		}
 	}
 }
