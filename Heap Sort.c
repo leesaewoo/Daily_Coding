@@ -44,10 +44,12 @@ int main(void)
 		}
 	}
 	
+	//check 
 	for(i = 0 ; i < heapSize ; i++)
 	{
 		printf("arrayASC[%d] = %d\n", i, arrayASC[i]);
 	}
+	//check
 	
 	free(heapArray);
 	free(arrayASC);
