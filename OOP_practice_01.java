@@ -20,7 +20,8 @@ class Cat extends Animal {
         super(name, sex, age, weight);
         this.catCode = catCode;
     }
-    void printcatCode() {
+    void printVal() {
+        super.printVal(); // Overriding
         System.out.println("catCode: " + this.catCode);
     }
 }
@@ -31,9 +32,7 @@ public class OOP_practice_01 {
 
         System.out.println("Cat1");
         cat1.printVal();
-        cat1.printcatCode();
         System.out.println("\nCat2");
         cat2.printVal();
-        cat2.printcatCode();
     }
 }
