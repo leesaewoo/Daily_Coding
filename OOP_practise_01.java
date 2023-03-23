@@ -25,7 +25,7 @@ class Cat extends Animal {
         System.out.println("catCode: " + this.catCode);
     }
 }
-public class OOP_practice_01 {
+public class OOP_practise_01 {
     public static void main(String[] args) {
         Cat cat1 = new Cat("abcdefg", "navi", "male", 4, 11);
         Cat cat2 = new Cat("hijk", "ddong", "female", 3, 8);
