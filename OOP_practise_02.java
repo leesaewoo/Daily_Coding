@@ -26,7 +26,7 @@ class Zookeeper {
     }
 }
 
-public class OOP_practice_02 {
+public class OOP_practise_02 {
     public static void main(String[] args) {
         Zookeeper zookeeper = new Zookeeper();
         Tiger tiger = new Tiger();
