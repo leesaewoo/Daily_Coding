@@ -1,6 +1,50 @@
 package com.codestates.seb.calculator;
 import java.util.Scanner;
+import java.text.DecimalFormat;
 public class Calculator {
+  static class Cal {
+    private double firstNum;
+    private char operator;
+    private double secondNum;
+    private String inputString;
+
+    double calculate(String inputString) throws Exception {
+      this.inputString = inputString;
+      //입력값(inputString)에서 첫 번째 숫자(firstNum), 연산자(operator), 두 번째 숫자(secondNum)를 추출
+      //입력값 첫 자리에 음수를 나타내는 '-'가 들어올 수도 있기 때문에 두 번째 자리부터 탐색
+      for (int i = 1; i < this.inputString.length(); i++) {
+        if (this.inputString.charAt(i) == '+' || this.inputString.charAt(i) == '-' || this.inputString.charAt(i) == '*'
+                || this.inputString.charAt(i) == '/') {
+          this.firstNum = Double.parseDouble(this.inputString.substring(0, i).trim());
+          this.secondNum = Double.parseDouble(this.inputString.substring(i + 1, inputString.length()).trim());
+          this.operator = inputString.charAt(i);
+          break;
+        }
+
+        if (i == inputString.length() - 1) {
+          throw new Exception();
+        }
+      }
+
+      switch (this.operator) {
+        case '+':
+          return this.firstNum + this.secondNum;
+
+        case '-':
+          return this.firstNum - this.secondNum;
+
+        case '*':
+          return this.firstNum * this.secondNum;
+
+        case '/':
+          return this.firstNum / this.secondNum;
+
+        default:
+          throw new Exception();
+      }
+    }
+  }
+
   public static void main(String[] args) {
         /*
             요구 사항에 따라 간단한 계산기를 만들어주세요.
@@ -12,6 +56,8 @@ public class Calculator {
     System.out.println("===Java Calculator===");
 
     Scanner scanner = new Scanner(System.in);
+    DecimalFormat decimalFormat = new DecimalFormat();
+    Cal calculator = new Cal();
 
     while(true) {
       System.out.println("계산식을 입력해 주세요. (종료: \"end\" 입력)");
@@ -19,51 +65,14 @@ public class Calculator {
 
       try {
         String inputString = scanner.nextLine();
+
         if(inputString.equalsIgnoreCase("end")) {
           System.out.println("종료되었습니다.");
           break;
         }
 
-        double firstNum = 0;
-        double secondNum = 0;
-        char operator = ' ';
+        System.out.printf("계산된 값: %s\n\n", decimalFormat.format(calculator.calculate(inputString)));
 
-        //입력값(inputString)에서 첫 번째 숫자(firstNum), 연산자(operator), 두 번째 숫자(secondNum)를 추출
-        //입력값 첫 자리에 음수를 나타내는 '-'가 들어올 수도 있기 때문에 두 번째 자리부터 탐색
-        for(int i = 1 ; i < inputString.length() ; i++) {
-          if(inputString.charAt(i) == '+' || inputString.charAt(i) == '-' || inputString.charAt(i) == '*'
-                  || inputString.charAt(i) == '/') {
-            firstNum = Double.parseDouble(inputString.substring(0, i).trim());
-            secondNum = Double.parseDouble(inputString.substring(i + 1, inputString.length()).trim());
-            operator = inputString.charAt(i);
-            break;
-          }
-
-          if(i == inputString.length() - 1) {
-            throw new Exception();
-          }
-        }
-
-        switch(operator) {
-          case '+':
-            System.out.printf("계산된 값 : %.4f\n\n", firstNum + secondNum);
-            break;
-
-          case '-':
-            System.out.printf("계산된 값 : %.4f\n\n", firstNum - secondNum);
-            break;
-
-          case '*':
-            System.out.printf("계산된 값 : %.4f\n\n", firstNum * secondNum);
-            break;
-
-          case '/':
-            System.out.printf("계산된 값 : %.4f\n\n", firstNum / secondNum);
-            break;
-
-          default:
-            throw new Exception();
-        }
       } catch (Exception e) {
         System.out.println("잘못된 입력입니다. 다시 입력해 주세요");
       }
