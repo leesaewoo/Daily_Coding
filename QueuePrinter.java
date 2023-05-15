@@ -46,42 +46,28 @@ public class QueuePrinter {
         }
         int sec = 0;
         int occupation = 0;
+        int index = 0;
 
         queue.poll();
-        queue.add(documents[0]);
-        occupation += documents[0];
+        queue.add(documents[index]);
+        occupation += documents[index];
+        index++;
         sec++;
 
-        for(int i = 1 ; i < documents.length ; i++) {
-            if(capacities - occupation < documents[i]) {
-                while(capacities - occupation < documents[i]) {
-                    int temp = queue.poll();
-                    if(temp != 0) {
-                        occupation -= temp;
-                    }
-
-                    if(capacities - occupation < documents[i]) {
-                        queue.add(0);
-                    }
-                    sec++;
+        while(!queue.isEmpty()) {
+            sec++;
+            occupation -= queue.poll();
+            if(index < documents.length) {
+                if(capacities - occupation < documents[index]) {
+                    queue.add(0);
                 }
-
-                queue.add(documents[i]);
-                occupation += documents[i];
-            }
-            else {
-                int temp = queue.poll();
-                if(temp != 0) {
-                    occupation -= temp;
+                else {
+                    queue.add(documents[index]);
+                    occupation += documents[index];
+                    index++;
                 }
-
-                queue.add(documents[i]);
-                occupation += documents[i];
-                sec++;
             }
         }
-
-        sec += bufferSize;
 
         return sec;
     }
