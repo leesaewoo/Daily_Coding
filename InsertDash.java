@@ -1,3 +1,4 @@
+//문자열을 입력받아 연속된 한자리 홀수 숫자 사이에 '-'를 추가한 문자열을 리턴해야 합니다.
 public class InsertDash {
     public String insertDash(String str) {
         if(str.equals("")) return null;
