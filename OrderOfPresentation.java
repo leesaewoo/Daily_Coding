@@ -36,11 +36,11 @@ public class OrderOfPresentation {
         for(int i = 0 ; i < N ; i++) {
             int size = list.size();
 
-            int numOfSmallNum = findSmallNum(list, K[i]);
+            int numOfSmallNum = findSmallNum(list, K[i]); // list 에서 K[i]보다 작은 값들을 구하는 함수
 
-            if(numOfSmallNum != 0) { //K[i] = 1 일땐 해당 수 보다 먼저 올 수 있는 숫자의 경우의 수 없음
+            if(numOfSmallNum != 0) { //K[i]이 가장 작은 값 일땐 해당 값보다 먼저 올 수 있는 숫자의 경우의 수 없음
                 if(size >= 3) {
-                    count += numOfSmallNum * factorial(size - 1); //팩토리얼 구해야함
+                    count += numOfSmallNum * factorial(size - 1); //먼저 올 수 있는 숫자의 경우 X 나머지 자리에 올 수 있는 경우의 수
                     list.remove(list.indexOf(K[i]));
                 }
                 else if(list.size() == 2) {
