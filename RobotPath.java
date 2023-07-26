@@ -8,76 +8,51 @@
 //src, dst는 항상 로봇이 지나갈 수 있는 통로입니다.
 //src에서 dst로 가는 경로가 항상 존재합니다.
 
-import java.util.ArrayList;
-import java.util.List;
+
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.PriorityQueue;
 
 public class RobotPath {
-    //TODO: 시간초과 해결
-    List<Integer> result = new ArrayList<>();
     public int robotPath(int[][] room, int[] src, int[] dst) {
+        boolean[][] visit = new boolean[room.length][room[0].length];
 
-        int[][] visited = new int[room.length][room[0].length];
+        int[][] distance = new int[room.length][room[0].length];
+        for(int[] row : distance) {
+            Arrays.fill(row, Integer.MAX_VALUE);
+        }
+        distance[src[0]][src[1]] = 0;
 
-        recursive(room, visited, src, dst, 0);
+        PriorityQueue<int[]> priorityQueue = new PriorityQueue<>(Comparator.comparingInt(a -> distance[a[0]][a[1]]));
+        priorityQueue.offer(src);
 
-        return result.stream().mapToInt(x -> x).min().orElseThrow(RuntimeException::new);
-    }
+        int[][] directions = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
 
-    public void recursive(int[][] room, int[][] visited, int[] cur, int[] dst, int minute) {
-        if(cur[0] == dst[0] && cur[1] == dst[1]) {
-            result.add(minute);
+        while(!priorityQueue.isEmpty()) {
+            int[] current = priorityQueue.poll();
+            int x = current[0];
+            int y = current[1];
+
+            visit[x][y] = true;
+
+            if(x == dst[0] && y == dst[1]) {
+                return distance[x][y];
+            }
+
+            for(int[] dir : directions) {
+                int nx = dir[0] + x;
+                int ny = dir[1] + y;
+
+                if(nx >= 0 && nx < room.length && ny >= 0 && ny < room[0].length && room[nx][ny] == 0 && !visit[nx][ny]) {
+                    int newDistance = distance[x][y] + 1;
+                    if(newDistance < distance[nx][ny]) {
+                        distance[nx][ny] = newDistance;
+                        priorityQueue.offer(new int[]{nx, ny});
+                    }
+                }
+            }
         }
 
-        if(cur[0] > 0 && room[cur[0] - 1][cur[1]] == 0 && visited[cur[0] - 1][cur[1]] == 0) {
-            //UP
-            cur[0] -= 1;
-            visited[cur[0]][cur[1]] = 1;
-            minute += 1;
-
-            recursive(room, visited, cur, dst, minute);
-
-            visited[cur[0]][cur[1]] = 0;
-            cur[0] += 1;
-            minute -= 1;
-        }
-
-        if(cur[0] < room.length - 1 && room[cur[0] + 1][cur[1]] == 0 && visited[cur[0] + 1][cur[1]] == 0) {
-            //DOWN
-            cur[0] += 1;
-            visited[cur[0]][cur[1]] = 1;
-            minute += 1;
-
-            recursive(room, visited, cur, dst, minute);
-
-            visited[cur[0]][cur[1]] = 0;
-            cur[0] -= 1;
-            minute -= 1;
-        }
-
-        if(cur[1] > 0 && room[cur[0]][cur[1] - 1] == 0 && visited[cur[0]][cur[1] - 1] == 0) {
-            //LEFT
-            cur[1] -= 1;
-            visited[cur[0]][cur[1]] = 1;
-            minute += 1;
-
-            recursive(room, visited, cur, dst, minute);
-
-            visited[cur[0]][cur[1]] = 0;
-            cur[1] += 1;
-            minute -= 1;
-        }
-
-        if(cur[1] < room[0].length - 1 && room[cur[0]][cur[1] + 1] == 0 && visited[cur[0]][cur[1] + 1] == 0) {
-            //RIGHT
-            cur[1] += 1;
-            visited[cur[0]][cur[1]] = 1;
-            minute += 1;
-
-            recursive(room, visited, cur, dst, minute);
-
-            visited[cur[0]][cur[1]] = 0;
-            cur[1] -= 1;
-            minute -= 1;
-        }
+        throw new RuntimeException("No path found");
     }
 }
